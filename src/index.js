@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const { Server } = require('socket.io');
+const { VoteService } = require('./services/vote.service');
 
 const app = express();
 const server = require('http').createServer(app);
@@ -13,13 +14,21 @@ app.get('/', (req, res) => {
 });
 
 io.on('connection', (socket) => {
-    console.log('a user connected', socket.id);
-    
-    socket.on('vote', (skt) => {
-        console.log('a user voted');
-    })
-});
+    console.log(`[Socket.io] [connection] User connected with id: ${socket.id}`);
 
+    socket.emit('load-data', VoteService.getVotes());
+    
+    socket.on('vote', async (vote) => {
+        console.log(`[Socket.io] [vote] Vote registered by user ${socket.id}`);
+        VoteService.registerVote(vote)
+            .then((result) => {
+                io.emit('update-data', result);
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    });
+});
 
 server.listen(3000, () => {
     console.log('Servidor rodando...');
