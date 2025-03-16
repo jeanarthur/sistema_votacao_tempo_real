@@ -1,7 +1,20 @@
 const votes = {
-    a: 0,
-    b: 0
-}
+    "Eletrônica": 0,
+    "Funk": 0,
+    "Indie": 0,
+    "J-Pop": 0,
+    "K-Pop": 0,
+    "Metal": 0,
+    "Pagode": 0,
+    "Pop": 0,
+    "Rap": 0,
+    "Reggae": 0,
+    "Rock": 0,
+    "Samba": 0,
+    "Sertanejo": 0,
+    "Trap": 0,
+    "Outros": 0,
+};
 
 const VoteService = {
     registerVote: async function (vote) {
