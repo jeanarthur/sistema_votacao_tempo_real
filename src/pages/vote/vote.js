@@ -8,6 +8,7 @@ const _onLoadData = function(votes) {
     console.log(`[Socket.io] [load-data] initial data received from the server`);
     voteResults.innerText = JSON.stringify(votes);
     
+    voteResults.innerHTML = '';
     voteSelect.innerHTML = '';
     Object.keys(votes).forEach((key)=>{
         const option = document.createElement('option');
@@ -15,6 +16,11 @@ const _onLoadData = function(votes) {
         option.value = key;
         
         voteSelect.appendChild(option);
+
+        const li = document.createElement('li');
+        li.textContent = `${key}: ${votes[key]}`;
+
+        voteResults.appendChild(li);
     });
     
     console.log(votes);
@@ -22,7 +28,13 @@ const _onLoadData = function(votes) {
 
 const _onUpdateData = function(votes) {
     console.log(`[Socket.io] [update-data] Data is updated on server`);
-    voteResults.innerText = JSON.stringify(votes);
+    voteResults.innerHTML = '';
+    Object.keys(votes).forEach((key)=>{
+        const li = document.createElement('li');
+        li.textContent = `${key}: ${votes[key]}`;
+
+        voteResults.appendChild(li);
+    });
     console.log(votes);
 };
 
