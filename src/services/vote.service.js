@@ -1,4 +1,4 @@
-const VoteModel = require("../models/vote")
+const VoteModel = require("../models/vote.model")
 
 // const votes = {
 //     "Eletrônica": 0,
@@ -21,38 +21,24 @@ const VoteModel = require("../models/vote")
 const VoteService = {
     _votation: null,
 
-    init: async function () {
-        const voteModel = await VoteModel.findById(process.env.VOTE_ID);
-        if (voteModel === null) {
-
-        }
-
-        console.log(voteModel)
-        this._votation = voteModel;
-    },
-
     registerVote: async function (vote) {
         return new Promise(async (resolve, reject) => {
-            if (Object.keys(this._votation.votes).includes(vote)) {
-                this._votation.votes[vote]++;
+            this.getVotes().then((votes) => {
+                if (Object.keys(votes).includes(vote)) {
+                    votes[vote]++;
+                    try{
+                        VoteModel.updateOne({_id: process.env.VOTE_ID, votes: votes})
+                            .then(_ => resolve(votes));
+                    }
+                    catch(err){
+                        reject(`[VoteService] [registerVote] Error on save vote in Database`)
+                    }
 
-                try{
-                    const vote = new VoteModel({
-                        name: `Update-${Date.now().toLocaleString('pt-br')}`,
-                        votes: this._votation.votes
-                    })
-                    const savedVote = await vote.save()
-            
-                    resolve(this._votation.votes);
+                } else {
+                    reject(`[VoteService] [registerVote] Choice '${vote}' is not a valid vote option`);
                 }
-                catch(err){
-                    reject(`[VoteService] [registerVote] Error on save vote in Database`)
-                }
-
-            } else {
-                reject(`[VoteService] [registerVote] Choice '${vote}' is not a valid vote option`);
-            }
-        })
+            });
+        });
     },
 
     getVotes: async () => {
