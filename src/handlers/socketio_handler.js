@@ -16,7 +16,10 @@ class SocketIoHandler {
     _onConnection(socket) {
         this._socket = socket;
         console.log(`[Socket.io] [connection] User connected with id: ${this._socket.id}`);
-        socket.emit('load-data', this._voteService.getVotes());
+        this._voteService.getVotes()
+            .then((votes) => {
+                socket.emit('load-data', votes);
+            });
         socket.on('vote', this._onVote.bind(this)); 
     }
 
