@@ -39,10 +39,18 @@ const _createVoteBar = function(votes, maxVotes, optionKey) {
     return barContainer;
 };
 
-const _onLoadData = function(votes) {
+const _onLoadData = function(votation) {
     console.log(`[Socket.io] [load-data] initial data received from the server`);
-    const votesData = votes;
+    const votesData = votation?.votes;
     const maxVotes = _calculateMaxVotes(votesData);
+
+    const titleElement = document.getElementById('vote-title');
+    const descriptionElement = document.getElementById('vote-description');
+    const optionsTitleElement = document.getElementById('vote-options-title');
+
+    titleElement.innerText = votation?.title;
+    descriptionElement.innerText = votation?.description;
+    optionsTitleElement.innerText = votation?.options_title;
     
     voteResults.innerHTML = '';
     voteSelect.innerHTML = '';
@@ -76,9 +84,9 @@ const _onLoadData = function(votes) {
     });
 };
 
-const _onUpdateData = function(votes) {
+const _onUpdateData = function(votation) {
     console.log(`[Socket.io] [update-data] Data is updated on server`);
-    const votesData = votes;
+    const votesData = votation?.votes;
     const maxVotes = _calculateMaxVotes(votesData);
     
     voteResults.innerHTML = '';
