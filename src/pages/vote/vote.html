@@ -137,6 +137,77 @@
             max-width: 500px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
+
+        /* Mobile Responsive Adjustments */
+        @media (max-width: 768px) {
+            #vote-container {
+                flex-direction: column;
+                gap: 20px;
+                padding: 0 20px;
+            }
+
+            #vote-results, .voting-section {
+                width: 90%;
+            }
+
+            #vote-title {
+                font-size: 1.8em;
+                padding: 10px 0;
+            }
+
+            #vote-description {
+                font-size: 1em;
+                padding: 0 20px;
+            }
+
+            header {
+                padding: 15px 0;
+                border-bottom-right-radius: 30px;
+                border-bottom-left-radius: 30px;
+            }
+
+            h3 {
+                margin: 15px 0 10px;
+                font-size: 1.2em;
+            }
+
+            #vote-results li {
+                padding: 8px;
+                margin: 10px 0;
+            }
+
+            .vote-bar-container {
+                height: 25px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            #vote-title {
+                font-size: 1.5em;
+            }
+
+            #vote-description {
+                font-size: 0.9em;
+            }
+
+            #vote-results {
+                font-size: 1em;
+                padding: 15px;
+            }
+
+            .voting-section {
+                padding: 15px;
+            }
+
+            #vote-options, #vote-button {
+                width: 180px;
+                font-size: 0.9em;
+            }
+
+            #vote-options {
+                max-width: 100%;
+            }
+        }
     </style>    
     <script src="/socket.io/socket.io.js"></script>
 </head>
