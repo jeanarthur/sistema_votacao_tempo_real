@@ -5,14 +5,16 @@ const VoteService = {
 
     registerVote: async function (vote) {
         return new Promise(async (resolve, reject) => {
-            this.getVotes().then((votes) => {
+            this.getVotes().then((votation) => {
+                const votes = votation?.votes;
                 if (Object.keys(votes).includes(vote)) {
                     votes[vote]++;
+                    if (votation) votation.votes = votes;
                     try{
                         VoteModel.findById(process.env.VOTE_ID)
                             .updateOne({votes: votes})
                             .then(_ => {
-                                resolve(votes);
+                                resolve(votation);
                             });
                     }
                     catch(err){
@@ -28,8 +30,8 @@ const VoteService = {
 
     getVotes: async () => {
         return new Promise(async (resolve, reject) => {
-            if (this._votation?.votes) {
-                resolve(this._votation?.votes);
+            if (this._votation) {
+                resolve(this._votation);
                 return;
             }
 
@@ -40,7 +42,7 @@ const VoteService = {
             }
 
             this._votation = voteModel;
-            resolve(this._votation?.votes ?? {});
+            resolve(this._votation ?? {});
         });
     }
 }
