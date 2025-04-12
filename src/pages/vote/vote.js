@@ -14,10 +14,19 @@ const _generatePastelColor = function() {
 };
 
 const _getOptionColor = function(optionKey) {
-    if (!optionColors[optionKey]) {
-        optionColors[optionKey] = _generatePastelColor();
+    // Pega as opções em ordem
+    const options = Object.keys(voteSelect.options).map(key => voteSelect.options[key].value);
+    
+    // Primeira opção será vermelha
+    if (optionKey === options[0]) {
+        return '#d00303'; // Vermelho
     }
-    return optionColors[optionKey];
+    // Segunda opção será amarela
+    else if (optionKey === options[1]) {
+        return '#FFEB3B'; // Amarelo
+    }
+    
+    return 'hsl(0, 0%, 50%)';
 };
 
 const _calculateMaxVotes = function(votesData) {
@@ -128,43 +137,37 @@ console.log('Script carregado');
 
 // Atualização da função de criar confete
 function createConfetti() {
-    // Pega a opção selecionada
     const selectedOption = voteSelect.value;
-    // Pega a cor associada à opção
-    const baseColor = _getOptionColor(selectedOption);
+    const options = Object.keys(voteSelect.options).map(key => voteSelect.options[key].value);
     
-    // Converte a cor HSL para valores individuais
-    const hslMatch = baseColor.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
-    const baseHue = parseInt(hslMatch[1]);
-    
-    // Aumenta o número de partículas
     for (let i = 0; i < 150; i++) {
         const confetti = document.createElement('div');
         confetti.className = 'confetti';
         
-        // Distribui as partículas por toda a largura da tela
         confetti.style.left = `${Math.random() * 100}vw`;
-        
-        // Posição inicial aleatória no topo
         confetti.style.top = `${Math.random() * 20 - 20}vh`;
         
-        // Varia a cor levemente baseada na cor da opção selecionada
-        const hueVariation = baseHue + (Math.random() * 20 - 10);
-        const saturation = 60 + Math.random() * 20;
-        const lightness = 45 + Math.random() * 10;
-        confetti.style.backgroundColor = `hsl(${hueVariation}, ${saturation}%, ${lightness}%)`;
+        // Para a segunda opção, alterna entre verde e amarelo
+        if (selectedOption === options[1]) {
+            const isGreen = Math.random() > 0.5;
+            if (isGreen) {
+                confetti.style.background = 'linear-gradient(45deg, #4CAF50 0%, #81C784 100%)';
+            } else {
+                confetti.style.background = 'linear-gradient(45deg, #FFEB3B 0%, #FFF176 100%)';
+            }
+        } else {
+            // Para a primeira opção (vermelho)
+            confetti.style.background = 'linear-gradient(45deg, #f44336 0%, #ef5350 100%)';
+        }
         
-        // Tamanhos variados
         const size = Math.random() * 10 + 5;
         confetti.style.width = `${size}px`;
         confetti.style.height = `${size}px`;
         
-        // Velocidades diferentes
         confetti.style.animationDuration = `${Math.random() * 2 + 1}s`;
         
         document.body.appendChild(confetti);
         
-        // Remove o elemento após a animação
         setTimeout(() => confetti.remove(), 2000);
     }
 }
