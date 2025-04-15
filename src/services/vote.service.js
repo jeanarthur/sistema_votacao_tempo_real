@@ -4,46 +4,48 @@ const VoteService = {
     _votation: null,
 
     registerVote: async function (vote) {
-        return new Promise(async (resolve, reject) => {
-            this.getVotes().then((votation) => {
-                const votes = votation?.votes;
-                if (Object.keys(votes).includes(vote)) {
-                    votes[vote]++;
-                    if (votation) votation.votes = votes;
-                    try{
-                        VoteModel.findById(process.env.VOTE_ID)
-                            .updateOne({votes: votes})
-                            .then(_ => {
-                                resolve(votation);
-                            });
-                    }
-                    catch(err){
-                        reject(`[VoteService] [registerVote] Error on save vote in Database. [${err}]`);
-                    }
+        try {
+            const votation = await this.getVotes();
+            const votes = votation?.votes;
+            
+            if (!votes || !Object.keys(votes).includes(vote)) {
+                throw `[VoteService] [registerVote] Choice '${vote}' is not a valid vote option`;
+            }
 
-                } else {
-                    reject(`[VoteService] [registerVote] Choice '${vote}' is not a valid vote option`);
-                }
-            });
-        });
+            votes[vote]++;
+            if (votation) votation.votes = votes;
+
+            try {
+                await VoteModel.findById(process.env.VOTE_ID)
+                    .updateOne({votes: votes});
+                return votation;
+            } catch(err) {
+                throw `[VoteService] [registerVote] Error on save vote in Database. [${err.message}]`;
+            }
+        } catch (error) {
+            throw error;
+        }
     },
 
-    getVotes: async () => {
-        return new Promise(async (resolve, reject) => {
+    getVotes: async function() {
+        try {
             if (this._votation) {
-                resolve(this._votation);
-                return;
+                return this._votation;
             }
 
             const voteModel = await VoteModel.findById(process.env.VOTE_ID);
-            if (voteModel === null) {
-                reject(`[VoteService] [getVotes] Database with id ${process.env.VOTE_ID} not exists`);
-                return;
+            if (!voteModel) {
+                throw `[VoteService] [getVotes] Database with id ${process.env.VOTE_ID} not exists`;
             }
 
             this._votation = voteModel;
-            resolve(this._votation ?? {});
-        });
+            return this._votation;
+        } catch (error) {
+            if (error.message) {
+                throw error;
+            }
+            throw error;
+        }
     }
 }
 
